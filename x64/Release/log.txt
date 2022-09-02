@@ -1,0 +1,24 @@
+[2022-9-2_11:29:2]: Recupero nomi dei repo salvati.
+[2022-9-2_11:29:2]: Nome repo: Git-Test
+[2022-9-2_11:29:2]: Nome repo: WiFi-Password-Recovery
+[2022-9-2_11:29:2]: Nome repo: Git-Test
+[2022-9-2_11:29:2]: Nome repo: Nuova-cartella
+[2022-9-2_11:29:2]: ----------------
+[2022-9-2_11:29:9]: Recupero nomi dei repo salvati.
+[2022-9-2_11:29:9]: Nome repo: Git-Test
+[2022-9-2_11:29:9]: Nome repo: WiFi-Password-Recovery
+[2022-9-2_11:29:9]: Nome repo: Git-Test
+[2022-9-2_11:29:9]: ----------------
+[2022-9-2_11:29:12]: Git Fetch: 0
+
+[2022-9-2_11:29:12]: Nome repo: Git-Test
+[2022-9-2_11:29:12]: Branch attivo: master
+[2022-9-2_11:29:12]: Git Status: On branch master
+nothing to commit, working tree clean
+
+[2022-9-2_11:29:13]: Git Status: On branch master
+nothing to commit, working tree clean
+
+[2022-9-2_11:29:24]: Git Status: On branch master
+nothing to commit, working tree clean
+

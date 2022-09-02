@@ -1,0 +1,130 @@
+GIT PUSH <Repo-Name> <BranchName>:
+	128:
+	{
+		fatal: No configured push destination.
+		Either specify the URL from the command-line or configure a remote repository using
+		
+			git remote add <name> <url>
+		
+		and then push using the remote name
+		
+			git push <name>
+		
+	}
+	
+	Non è stata configurata nessuna url di push.
+	Per configurare una url di push usa:
+	git remote add <name> <url> (es. git remote add Git-Test https://github.com/Criper98/Git-Tesi.git)
+	
+	128:
+	{
+		fatal: 'Git-Tes' does not appear to be a git repository
+		fatal: Could not read from remote repository.
+		
+		Please make sure you have the correct access rights
+		and the repository exists.
+	}
+	
+	Il repository non esiste o non ha i permessi corretti.
+	Può essere causato dal nome errato specificato per il Repo.
+	
+	1:
+	{
+		error: src refspec mastero does not match any
+		error: failed to push some refs to 'https://github.com/Criper98/Git-Tesi.git'
+	}
+	
+	Il branch indicato non esiste.
+	
+	0:
+	{
+		Everything up-to-date
+	}
+	
+	Tutto è già aggiornato.
+	
+	0:
+	{
+		Enumerating objects: 5, done.
+		Counting objects: 100% (5/5), done.
+		Writing objects: 100% (3/3), 257 bytes | 257.00 KiB/s, done.
+		Total 3 (delta 0), reused 0 (delta 0), pack-reused 0
+		To https://github.com/Criper98/Git-Tesi.git
+		   29076f8..6f53e7d  master -> master
+	}
+	
+	Push effettuato con successo.
+
+GIT CLONE <URL> <PATH> (es. git clone https://github.com/Criper98/Git-Tesi.git "C:\Users\cripe\Desktop\Test 1"):
+	0:
+	{
+		Cloning into 'C:\Users\cripe\Desktop\Test 1'...
+		remote: Enumerating objects: 9, done.
+		remote: Counting objects: 100% (9/9), done.
+		remote: Compressing objects: 100% (3/3), done.
+		remote: Total 9 (delta 0), reused 9 (delta 0), pack-reused 0
+		Receiving objects: 100% (9/9), done.
+	}
+	
+	Clonato con successo.
+	
+	128:
+	{
+		fatal: destination path 'C:\Users\cripe\Desktop\Test 1' already exists and is not an empty directory.
+	}
+	
+	Il percorso specificato non è una cartella vuota.
+	
+	128:
+	{
+		Cloning into 'C:\Users\cripe\Desktop\Test 1'...
+		remote: Repository not found.
+		fatal: repository 'https://github.com/Criper98/Git-Tes.git/' not found
+	}
+	
+	Repository non trovato.
+
+GIT COMMIT -m "Messaggio":
+	1:
+	{
+		On branch master
+		nothing to commit, working tree clean
+	}
+	
+	Non ci sono cambiamenti.
+	
+	1:
+	{
+		On branch master
+		Changes not staged for commit:
+		  (use "git add <file>..." to update what will be committed)
+		  (use "git restore <file>..." to discard changes in working directory)
+				modified:   Test.txt
+		
+		no changes added to commit (use "git add" and/or "git commit -a")
+	}
+	
+	Prima aggiungere i cambiamenti allo stage.
+	
+	0:
+	{
+		[master 99cd84f] Commit Assurdo
+		 1 file changed, 1 insertion(+), 1 deletion(-)
+	}
+	
+	Commit effettuato con successo.
+
+GIT CHECKOUT <BranchName>:
+	1:
+	{
+		error: pathspec 'abc' did not match any file(s) known to git
+	}
+	
+	Nessun Branch corrisponde a quello indicato.
+	
+	0:
+	{
+		Switched to branch 'Test-Branch'
+	}
+	
+	Branch cambiato con successo.
