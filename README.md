@@ -1,6 +1,6 @@
 # Git-Client
-Un client per Git realizzato interamente in C++.
-Dipendenze: [Git Bash](https://gitforwindows.org/).
+Un client per Git realizzato interamente in C++.  
+Dipendenze: [Git Bash](https://gitforwindows.org/).  
 OS: Windows7/10/11 x64
 
 Funzioni generali:
