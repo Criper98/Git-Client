@@ -5,19 +5,22 @@ class GitProject
 	private:
 		GeneralUtils gu;
 		DirUtils du;
+		//atomic<bool> Stop = false; // da errore, probabilmente non è compatibile coi vettori :(
 		bool Stop = false;
 		
-		void SC(ConsoleUtils& cu, Log& log, bool Debug, COORD CursorPos)
+		void SC(Log& log, bool Debug, COORD CursorPos)
 		{
 			TextColor tc;
+			WindowUtils wu;
+			ConsoleUtils cu;
 			
 			bool Update = true;
 			COORD OrigPos;
 			
-			Sleep(1000);
+			Sleep(2000);
 			while(!Stop)
 			{
-				if(cu.IsWindowActive() && Update)
+				if(wu.IsWindowActive() && Update)
 				{
 					Update = false;
 					OrigPos = cu.GetCursorPos();
@@ -27,7 +30,7 @@ class GitProject
 					cout << GetStatus(log, Debug); tc.SetColor(tc.Default); cout << " ]";
 					cu.SetCursorPos(OrigPos);
 				}
-				else if(!cu.IsWindowActive())
+				else if(!wu.IsWindowActive())
 				{
 					Update = true;
 				}
@@ -200,16 +203,16 @@ class GitProject
 		
 		short Pull(Log& log, bool Debug)
 		{
-			LoadingBar lb;
+			CLInterface cli;
 			int Rtn;
 			
 			cout << "Pull in corso ";
-			lb.OneCharBar();
+			cli.OneCharBar();
 			
 			du.ChangeCurrDir(RepoPath);
 			string Out = gu.GetCMDOutput("git pull origin " + GetActiveBranch(log, Debug), Rtn);
 			
-			lb.StopBar(100);
+			cli.StopBar(100);
 			cout << endl;
 			
 			if (Debug)
@@ -244,15 +247,15 @@ class GitProject
 		short Push(Log& log, bool Debug)
 		{
 			int Rtn;
-			LoadingBar lb;
+			CLInterface cli;
 			
 			cout << "Push in corso ";
-			lb.OneCharBar();
+			cli.OneCharBar();
 			
 			du.ChangeCurrDir(RepoPath);
 			string Out = gu.GetCMDOutput("git push origin " + GetActiveBranch(log, Debug), Rtn);
 			
-			lb.StopBar(200);
+			cli.StopBar(300);
 			cout << endl;
 			
 			if (Debug)
@@ -319,6 +322,11 @@ class GitProject
 				tc.SetColor(tc.Yellow);
 				return "Cambiamenti senza Stage";
 			}
+			if (Out.find("Untracked files:") != string::npos)
+			{
+				tc.SetColor(tc.Yellow);
+				return "File non tracciati, atteso Stage";
+			}
 			if(Out.find("Changes to be committed:") != string::npos)
 			{
 				tc.SetColor(tc.Yellow);
@@ -356,7 +364,7 @@ class GitProject
 		
 		short Fetch(Log& log, bool Debug, bool InsideCmd = true)
 		{
-			LoadingBar lb;
+			CLInterface cli;
 			ConsoleUtils cu;
 			
 			int Rtn;
@@ -369,11 +377,11 @@ class GitProject
 			else
 				cout << "\nCaricamento in corso ";
 			
-			lb.OneCharBar();
+			cli.OneCharBar();
 			
 			string Out = gu.GetCMDOutput("git fetch origin", Rtn);
 			
-			lb.StopBar(100);
+			cli.StopBar(100);
 			cout << endl;
 			
 			if(Debug)
@@ -385,6 +393,32 @@ class GitProject
 				return 1;
 			
 			log.WriteLog("Errore durante il Fetch: " + to_string(Rtn) + "\n" + Out);
+			return -1;
+		}
+
+		short Stash(Log& log, bool Debug)
+		{
+			int Rtn;
+			du.ChangeCurrDir(RepoPath);
+			string Out = gu.GetCMDOutput("git stash", Rtn);
+
+			if (Debug)
+				log.WriteLog("Stash salvato: " + to_string(Rtn) + "\n" + Out);
+
+			Out = gu.GetCMDOutput("git stash drop", Rtn);
+
+			if (Debug)
+				log.WriteLog("Stash droppato: " + to_string(Rtn) + "\n" + Out);
+
+			if (Rtn == 0)
+				return 0;
+			else if (Rtn == 1)
+			{
+				if (Out.find("No stash entries found.") != string::npos)
+					return 1;
+			}
+
+			log.WriteLog("Errore durante lo Stash: " + to_string(Rtn) + "\n" + Out);
 			return -1;
 		}
 		
@@ -399,10 +433,10 @@ class GitProject
 			return false;
 		}
 		
-		void StartStatusCheck(ConsoleUtils& cu, Log& log, bool Debug, COORD CursorPos)
+		void StartStatusCheck(Log& log, bool Debug, COORD CursorPos)
 		{
 			Stop = false;
-			thread t(&GitProject::SC, this, ref(cu), ref(log), Debug, CursorPos);
+			thread t(&GitProject::SC, this, ref(log), Debug, CursorPos);
 			t.detach();
 		}
 		

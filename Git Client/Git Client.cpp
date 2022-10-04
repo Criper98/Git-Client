@@ -12,34 +12,32 @@ int main()
 {
 	DirUtils du;
 	TextColor tc;
-	LoadingBar lb;
 	EasyMSGB msgb;
 	GeneralUtils gu;
 	ConsoleUtils cu;
 	CLInterface cli;
 	Log log( du.GetFilePath() + "log.txt" );
-	SettingsFile sf( du.GetFilePath() + "settings.ini");
+	SettingsFile sf( du.GetFilePath() + "settings.ini" );
 	
 	cout << "Caricamento in corso..." << endl;
-	lb.FullBar(30);
+	cli.FullBar(30);
 	
 	bool Debug = false;
-	string Version = "1.1.2";
+	string Version = "1.1.3";
 	GitProjects Projects;
 	VectString MenuPrincipale;
 	VectString MenuRepo;
 	VectString RepoNames;
 	VectSettings Settings;
 	
-	lb.Percent = 12;
+	cli.LoadingPercentage = 12;
 	
 	cu.ConsoleTitle("Git Client By Criper98");
 	cu.ExtendAsciiOutput();
 	log.RWFile();
 	msgb.DefTitle = "Git Client";
-	//sf.HideFileContent(sf.Hex); // 704040634A39213263703039426A6D6A527D3E6A
 	
-	lb.Percent = 25;
+	cli.LoadingPercentage = 25;
 	
 	MenuPrincipale.push_back("Esci");
 	MenuPrincipale.push_back("Apri Repo");
@@ -49,33 +47,34 @@ int main()
 	MenuPrincipale.push_back("Rimuovi Repo");
 	MenuPrincipale.push_back("Impostazioni");
 	
-	lb.Percent = 50;
+	cli.LoadingPercentage = 50;
 	
 	MenuRepo.push_back("Torna Indietro");
+	MenuRepo.push_back("Stage");
 	MenuRepo.push_back("Commit");
+	MenuRepo.push_back("Push");
 	MenuRepo.push_back("Cambia Branch");
 	MenuRepo.push_back("Crea Branch");
 	MenuRepo.push_back("Elimina Branch");
 	MenuRepo.push_back("Pull");
-	MenuRepo.push_back("Push");
-	MenuRepo.push_back("Stage");
 	MenuRepo.push_back("Fetch");
+	MenuRepo.push_back("Stash");
 	
-	lb.Percent = 62;
+	cli.LoadingPercentage = 62;
 	
 	Settings = LoadSettings(sf);
 	if (Settings[1].Value == "true")
 		Debug = true;
 	
-	lb.Percent = 75;
+	cli.LoadingPercentage = 75;
 	
 	if (!Settings[2].Value.empty())
 		cu.SetConsoleWindowSize({ (short)stoi(Settings[2].Value), (short)stoi(Settings[2].SecValue) });
 	else
 		msgb.Ok("Errore durante il caricamento dei settaggi.", msgb.Error);
 	
-	lb.Percent = 100;
-	lb.StopBar(250);
+	cli.LoadingPercentage = 100;
+	cli.StopBar(250);
 	
 	for(bool i=true; i;)
 	{
@@ -101,9 +100,10 @@ int main()
 				if(Projects[ActiveRepo].IsRepo())
 				{
 					bool StatusCheck = true;
+
+					UpdateRepoList(Projects, ActiveRepo);
 					
 					Projects[ActiveRepo].Fetch(log, Debug, false);
-					//Projects[ActiveRepo].StartStatusCheck(cu, log, Debug);
 					
 					while(i)
 					{
@@ -126,7 +126,7 @@ int main()
 						cout << "Status:\t\t[ ";
 						if(StatusCheck)
 						{
-							Projects[ActiveRepo].StartStatusCheck(cu, log, Debug, cu.GetCursorPos());
+							Projects[ActiveRepo].StartStatusCheck(log, Debug, cu.GetCursorPos());
 							StatusCheck = false;
 						}
 						cout << Projects[ActiveRepo].GetStatus(log, Debug); tc.SetColor(tc.Default);
@@ -140,11 +140,32 @@ int main()
 						if (Scelta == 0)
 							i = false;
 						
-						// Commit
+						// Stage
 						if (Scelta == 1)
+						{
+							switch (Projects[ActiveRepo].Stage(log, Debug))
+							{
+								case 0:
+									tc.SetColor(tc.Lime);
+									cout << "Stage eseguito nel Branch " << Projects[ActiveRepo].GetActiveBranch(log, Debug) << endl;
+								break;
+								
+								default:
+									tc.SetColor(tc.Red);
+									cout << "Errore sconosciuto." << endl;
+									Sleep(1000);
+							}
+							
+							tc.SetColor(tc.Default);
+							Sleep(1000);
+						}
+						
+						// Commit
+						if (Scelta == 2)
 						{
 							string CommitMessage;
 							cout << "Inserisci il messaggio del Commit: ";
+							cin.ignore();
 							getline(cin, CommitMessage);
 							switch (Projects[ActiveRepo].Commit(CommitMessage, log, Debug))
 							{
@@ -181,8 +202,56 @@ int main()
 							Sleep(1000);
 						}
 						
+						// Push
+						if (Scelta == 3)
+						{
+							switch (Projects[ActiveRepo].Push(log, Debug))
+							{
+								case 0:
+									tc.SetColor(tc.Lime);
+									cout << "Push eseguito nel Branch " << Projects[ActiveRepo].GetActiveBranch(log, Debug) << endl;
+								break;
+								
+								case 1:
+									tc.SetColor(tc.Purple);
+									cout << "Nessun cambiamento da applicare." << endl;
+									Sleep(1000);
+								break;
+								
+								case 2:
+									tc.SetColor(tc.Yellow);
+									cout << "Il Branch " << Projects[ActiveRepo].GetActiveBranch(log, Debug) << " non esiste nel Repository remoto." << endl;
+									Sleep(1000);
+								break;
+								
+								case 3:
+									AssociateRemoteRepo(log, Debug, Projects, ActiveRepo);
+									Sleep(1000);
+								break;
+								
+								case 4:
+									tc.SetColor(tc.Yellow);
+									cout << "Nessuna destinazione configurata per il push." << endl;
+									Sleep(1000);
+								break;
+								
+								case 5:
+									tc.SetColor(tc.Yellow);
+									cout << "Il branch remoto è più aggiornato di quello locale.\nProva a fare un Pull." << endl;
+									Sleep(2000);
+								break;
+								
+								default:
+									tc.SetColor(tc.Red);
+									cout << "Errore sconosciuto." << endl;
+							}
+							
+							tc.SetColor(tc.Default);
+							Sleep(1000);
+						}
+						
 						// Cambia Branch
-						if (Scelta == 2)
+						if (Scelta == 4)
 						{
 							VectString Branches = Projects[ActiveRepo].GetBranches(log, Debug);
 							
@@ -227,7 +296,7 @@ int main()
 						}
 						
 						// Crea Branch
-						if (Scelta == 3)
+						if (Scelta == 5)
 						{
 							string BranchName;
 							cout << "Inserisci il nome del nuovo Branch: ";
@@ -269,7 +338,7 @@ int main()
 						}
 						
 						// Elimina Branch
-						if (Scelta == 4)
+						if (Scelta == 6)
 						{
 							VectString Branches = Projects[ActiveRepo].GetBranches(log, Debug);
 							Branches.push_back("[ ANNULLA ]");
@@ -332,7 +401,7 @@ int main()
 						}
 						
 						// Pull
-						if (Scelta == 5)
+						if (Scelta == 7)
 						{
 							switch (Projects[ActiveRepo].Pull(log, Debug))
 							{
@@ -366,76 +435,8 @@ int main()
 								break;
 								
 								case 5:
-									AssociateRemoteRepo(log, Debug, Projects[ActiveRepo]);
+									AssociateRemoteRepo(log, Debug, Projects, ActiveRepo);
 									Sleep(2000);
-								break;
-								
-								default:
-									tc.SetColor(tc.Red);
-									cout << "Errore sconosciuto." << endl;
-									Sleep(1000);
-							}
-							
-							tc.SetColor(tc.Default);
-							Sleep(1000);
-						}
-						
-						// Push
-						if (Scelta == 6)
-						{
-							switch (Projects[ActiveRepo].Push(log, Debug))
-							{
-								case 0:
-									tc.SetColor(tc.Lime);
-									cout << "Push eseguito nel Branch " << Projects[ActiveRepo].GetActiveBranch(log, Debug) << endl;
-								break;
-								
-								case 1:
-									tc.SetColor(tc.Purple);
-									cout << "Nessun cambiamento da applicare." << endl;
-									Sleep(1000);
-								break;
-								
-								case 2:
-									tc.SetColor(tc.Yellow);
-									cout << "Il Branch " << Projects[ActiveRepo].GetActiveBranch(log, Debug) << " non esiste nel Repository remoto." << endl;
-									Sleep(1000);
-								break;
-								
-								case 3:
-									AssociateRemoteRepo(log, Debug, Projects[ActiveRepo]);
-									Sleep(1000);
-								break;
-								
-								case 4:
-									tc.SetColor(tc.Yellow);
-									cout << "Nessuna destinazione configurata per il push." << endl;
-									Sleep(1000);
-								break;
-								
-								case 5:
-									tc.SetColor(tc.Yellow);
-									cout << "Il branch remoto è più aggiornato di quello locale.\nProva a fare un Pull." << endl;
-									Sleep(2000);
-								break;
-								
-								default:
-									tc.SetColor(tc.Red);
-									cout << "Errore sconosciuto." << endl;
-							}
-							
-							tc.SetColor(tc.Default);
-							Sleep(1000);
-						}
-						
-						// Stage
-						if (Scelta == 7)
-						{
-							switch (Projects[ActiveRepo].Stage(log, Debug))
-							{
-								case 0:
-									tc.SetColor(tc.Lime);
-									cout << "Stage eseguito nel Branch " << Projects[ActiveRepo].GetActiveBranch(log, Debug) << endl;
 								break;
 								
 								default:
@@ -459,7 +460,7 @@ int main()
 								break;
 								
 								case 1:
-									AssociateRemoteRepo(log, Debug, Projects[ActiveRepo]);
+									AssociateRemoteRepo(log, Debug, Projects, ActiveRepo);
 									Sleep(1000);
 								break;
 								
@@ -469,6 +470,36 @@ int main()
 									Sleep(1000);
 							}
 							
+							Sleep(1000);
+						}
+
+						// Stash
+						if (Scelta == 9)
+						{
+							cout << "Sei sicuro di voler annullare tutti i cambiamenti senza commit?" << endl;
+
+							if (cli.MenuSingleSelQuadre({ "Si", "No" }) == 0)
+								switch (Projects[ActiveRepo].Stash(log, Debug))
+								{
+									case 0:
+										tc.SetColor(tc.Lime);
+										cout << "Cambiamenti eliminati." << endl;
+									break;
+
+									case 1:
+										tc.SetColor(tc.Yellow);
+										cout << "Nessun cambiamento da eliminare." << endl;
+										Sleep(1000);
+									break;
+
+									default:
+										tc.SetColor(tc.Red);
+										cout << "Errore sconosciuto." << endl;
+										Sleep(1000);
+								}
+							else
+								cout << "Operazione annullata." << endl;
+
 							Sleep(1000);
 						}
 					}
@@ -547,12 +578,12 @@ int main()
 			if (!Path.empty())
 			{
 				cout << "\nClone in corso ";
-				lb.OneCharBar();
+				cli.OneCharBar();
 				
 				du.ChangeCurrDir(Path);
 				CMDout = gu.GetCMDOutput("git clone " + URL, ReturnCode);
 				
-				lb.StopBar();
+				cli.StopBar(100);
 			}
 			
 			if(Debug)

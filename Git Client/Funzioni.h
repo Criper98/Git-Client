@@ -1,5 +1,4 @@
 #pragma once
-#include "Classi.h"
 
 void StampaTitolo(string Version, short NewLine = 0)
 {
@@ -171,7 +170,7 @@ short CreateRepo(Log& log, bool Debug, string Path)
 	return -1;
 }
 
-void AssociateRemoteRepo(Log& log, bool Debug, GitProject Repo)
+void AssociateRemoteRepo(Log& log, bool Debug, GitProjects& Projects, int ActiveRepo)
 {
 	TextColor tc;
 	CLInterface cli;
@@ -187,13 +186,13 @@ void AssociateRemoteRepo(Log& log, bool Debug, GitProject Repo)
 	{
 		cout << "URL Repository: ";
 		cin >> URL;
-		du.ChangeCurrDir(Repo.RepoPath);
+		du.ChangeCurrDir(Projects[ActiveRepo].RepoPath);
 		gu.NoOutputCMD("git remote add origin " + URL);
 		tc.SetColor(tc.Lime);
 		cout << "Repository associato." << endl;
 		
 		if(Debug)
-			log.WriteLog("Repo [" + Repo.GetRepoName(log, Debug) + "] Associato con URL [" + URL + "]");
+			log.WriteLog("Repo [" + Projects[ActiveRepo].GetRepoName(log, Debug) + "] Associato con URL [" + URL + "]");
 	}
 	else
 	{
@@ -202,4 +201,17 @@ void AssociateRemoteRepo(Log& log, bool Debug, GitProject Repo)
 	}
 	
 	tc.SetColor(tc.Default);
+}
+
+bool UpdateRepoList(GitProjects& Projects, int ActiveRepo)
+{
+	string Buff = Projects[ActiveRepo].RepoPath;
+	DirUtils du;
+
+	for (int i = 0; i < Projects.size(); i++)
+		if (Projects[i].RepoPath != Projects[ActiveRepo].RepoPath)
+			Buff += "\n" + Projects[i].RepoPath;
+
+	du.ChangeCurrDir(du.GetFilePath());
+	return du.WriteFile("projects.ini", Buff);
 }
