@@ -1,5 +1,6 @@
 #include <iostream>
 #include <Essentials.h>
+#include <EssCurl.h>
 #include "Classi.h"
 
 using namespace std;
@@ -76,6 +77,9 @@ int main()
 	
 	cli.LoadingPercentage = 100;
 	cli.StopBar(250);
+
+	if (Settings[3].Value == "true")
+		CheckUpdate(log, Debug, Version);
 	
 	for(bool i=true; i;)
 	{
@@ -735,6 +739,13 @@ int main()
 					
 					sf.SetSetting("ConsoleSizeX", to_string((int)wu.GetWindowSize().X));
 					sf.SetSetting("ConsoleSizeY", to_string((int)wu.GetWindowSize().Y));
+				}
+				else if (Scelta == 3)
+				{
+					if (Settings[3].Value == "true")
+						sf.SetSetting("CheckUpdate", "false");
+					else
+						sf.SetSetting("CheckUpdate", "true");
 				}
 			}
 			

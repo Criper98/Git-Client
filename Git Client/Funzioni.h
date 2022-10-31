@@ -110,6 +110,9 @@ void CheckSettings(SettingsFile& sf)
 	
 	if(!sf.CheckSetting("ConsoleSizeY"))
 		sf.SetSetting("ConsoleSizeY", "500");
+
+	if (!sf.CheckSetting("CheckUpdate"))
+		sf.SetSetting("CheckUpdate", "true");
 }
 
 VectSettings LoadSettings(SettingsFile& sf)
@@ -136,6 +139,11 @@ VectSettings LoadSettings(SettingsFile& sf)
 	Settings[2].Escape = true;
 	Settings[2].Value = sf.GetSetting("ConsoleSizeX");
 	Settings[2].SecValue = sf.GetSetting("ConsoleSizeY");
+
+	Settings.push_back(SettingsMenu());
+	Settings[3].Name = "CheckUpdate";
+	Settings[3].CheckValue = "true";
+	Settings[3].Value = sf.GetSetting("CheckUpdate");
 	
 	return Settings;
 }
@@ -214,4 +222,23 @@ bool UpdateRepoList(GitProjects& Projects, int ActiveRepo)
 
 	du.ChangeCurrDir(du.GetFilePath());
 	return du.WriteFile("projects.ini", Buff + "\n");
+}
+
+void CheckUpdate(Log& log, bool Debug, string Versione)
+{
+	GitHub gh;
+	EasyMSGB msgb;
+	GeneralUtils gu;
+
+	if (Debug)
+		log.WriteLog("Verifico la presenza di aggiornamenti.");
+
+	string LatestTag = gh.GetRepoTag("Criper98", "Git-Client", "Pipe");
+
+	if (LatestTag != Versione)
+	{
+		log.WriteLog("Aggiornamento trovato [" + LatestTag + "], version corrente [" + Versione + "]");
+		if (msgb.YesNo("Nuova versione disponibile: " + LatestTag + "\nScaricarla ora?", msgb.Info, "Git Client"))
+			gu.OpenURL("https://github.com/Criper98/Git-Client/releases/latest");
+	}
 }
