@@ -29,7 +29,7 @@ Funzionalità integrate:
 ----
 ## TODO
 
-- [ ] Check degli Update all'avvio.
+- [X] Check degli Update all'avvio. (1.1.4)
 - [ ] Integrare il comando Merge.
 - [ ] Integrare gitignore.
 
