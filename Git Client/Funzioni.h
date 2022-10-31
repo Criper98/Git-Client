@@ -213,5 +213,5 @@ bool UpdateRepoList(GitProjects& Projects, int ActiveRepo)
 			Buff += "\n" + Projects[i].RepoPath;
 
 	du.ChangeCurrDir(du.GetFilePath());
-	return du.WriteFile("projects.ini", Buff);
+	return du.WriteFile("projects.ini", Buff + "\n");
 }

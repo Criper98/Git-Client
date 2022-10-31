@@ -17,7 +17,7 @@ class GitProject
 			bool Update = true;
 			COORD OrigPos;
 			
-			Sleep(2000);
+			Sleep(3000);
 			while(!Stop)
 			{
 				if(wu.IsWindowActive() && Update)

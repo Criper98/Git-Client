@@ -1,34 +1,34 @@
 ﻿  Git Client.cpp
 C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(102,33): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(599,1): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(685,45): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(732,1): warning C4305: '+=': truncation from 'double' to 'float'
-C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(734,1): warning C4305: '+=': truncation from 'double' to 'float'
-C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(748,13): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(749,13): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(751,13): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(763,1): warning C4305: '+=': truncation from 'double' to 'float'
-C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(764,1): warning C4305: '+=': truncation from 'double' to 'float'
-C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(808,1): warning C4267: '=': conversion from 'size_t' to 'short', possible loss of data
-C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(832,1): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(838,1): warning C4267: '=': conversion from 'size_t' to '_Ty', possible loss of data
+C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(527,1): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(613,45): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(662,1): warning C4305: '+=': truncation from 'double' to 'float'
+C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(664,1): warning C4305: '+=': truncation from 'double' to 'float'
+C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(678,13): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(679,13): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(681,13): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(693,1): warning C4305: '+=': truncation from 'double' to 'float'
+C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(694,1): warning C4305: '+=': truncation from 'double' to 'float'
+C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(743,1): warning C4267: '=': conversion from 'size_t' to 'short', possible loss of data
+C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(767,1): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(773,1): warning C4267: '=': conversion from 'size_t' to '_Ty', possible loss of data
           with
           [
               _Ty=int
           ]
-C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(843,1): warning C4267: '=': conversion from 'size_t' to '_Ty', possible loss of data
+C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(778,1): warning C4267: '=': conversion from 'size_t' to '_Ty', possible loss of data
           with
           [
               _Ty=int
           ]
-C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(1417,1): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(1546,14): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(1838,13): warning C4244: 'initializing': conversion from 'unsigned long' to 'char', possible loss of data
-C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(1919,12): warning C4267: '+=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(2250,1): warning C4267: 'argument': conversion from 'size_t' to 'DWORD', possible loss of data
+C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(1375,1): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(1493,14): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(1785,13): warning C4244: 'initializing': conversion from 'unsigned long' to 'char', possible loss of data
+C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(1923,12): warning C4267: '+=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\cripe\Desktop\Altre cose\C++\Librerie\VStudio\Essentials.h(2266,1): warning C4267: 'argument': conversion from 'size_t' to 'DWORD', possible loss of data
   Generating code
-  1 of 871 functions ( 0.1%) were compiled, the rest were copied from previous compilation.
+  2 of 873 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+    1 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Git Client.vcxproj -> C:\Users\cripe\Desktop\Altre cose\C++\Git Client\x64\Release\Git Client.exe

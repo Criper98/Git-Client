@@ -16,6 +16,7 @@ int main()
 	GeneralUtils gu;
 	ConsoleUtils cu;
 	CLInterface cli;
+	WindowUtils wu;
 	Log log( du.GetFilePath() + "log.txt" );
 	SettingsFile sf( du.GetFilePath() + "settings.ini" );
 	
@@ -23,7 +24,7 @@ int main()
 	cli.FullBar(30);
 	
 	bool Debug = false;
-	string Version = "1.1.3";
+	string Version = "1.1.4";
 	GitProjects Projects;
 	VectString MenuPrincipale;
 	VectString MenuRepo;
@@ -69,7 +70,7 @@ int main()
 	cli.LoadingPercentage = 75;
 	
 	if (!Settings[2].Value.empty())
-		cu.SetConsoleWindowSize({ (short)stoi(Settings[2].Value), (short)stoi(Settings[2].SecValue) });
+		wu.SetWindowSize({ (short)stoi(Settings[2].Value), (short)stoi(Settings[2].SecValue) });
 	else
 		msgb.Ok("Errore durante il caricamento dei settaggi.", msgb.Error);
 	
@@ -522,7 +523,7 @@ int main()
 					Sleep(1000);
 				}
 				
-				Scelta = 1;
+				Scelta = -1;
 				i = true;
 			}
 			else
@@ -732,13 +733,13 @@ int main()
 					cout << "\nRidimensiona console a piacimento e premi invio..." << endl;
 					_getch();
 					
-					sf.SetSetting("ConsoleSizeX", to_string((int)cu.GetConsoleWindowSize().X));
-					sf.SetSetting("ConsoleSizeY", to_string((int)cu.GetConsoleWindowSize().Y));
+					sf.SetSetting("ConsoleSizeX", to_string((int)wu.GetWindowSize().X));
+					sf.SetSetting("ConsoleSizeY", to_string((int)wu.GetWindowSize().Y));
 				}
 			}
 			
 			i = true;
-			Scelta = 5;
+			Scelta = -1;
 		}
 	}
 	
