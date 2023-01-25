@@ -14,18 +14,18 @@ int main()
 	DirUtils du;
 	TextColor tc;
 	EasyMSGB msgb;
-	GeneralUtils gu;
+	SystemUtils su;
 	ConsoleUtils cu;
 	CLInterface cli;
 	WindowUtils wu;
-	Log log( du.GetFilePath() + "log.txt" );
-	SettingsFile sf( du.GetFilePath() + "settings.ini" );
+	Log log( du.GetModuleFilePath() + "log.txt" );
+	SettingsFile sf( du.GetModuleFilePath() + "settings.ini" );
 	
 	cout << "Caricamento in corso..." << endl;
 	cli.FullBar(30);
 	
 	bool Debug = false;
-	string Version = "1.1.4";
+	string Version = "1.1.5";
 	GitProjects Projects;
 	VectString MenuPrincipale;
 	VectString MenuRepo;
@@ -79,7 +79,8 @@ int main()
 	cli.StopBar(250);
 
 	if (Settings[3].Value == "true")
-		CheckUpdate(log, Debug, Version);
+		if (CheckUpdate(log, Debug, Version))
+			return 0;
 	
 	for(bool i=true; i;)
 	{
@@ -131,7 +132,7 @@ int main()
 						cout << "Status:\t\t[ ";
 						if(StatusCheck)
 						{
-							Projects[ActiveRepo].StartStatusCheck(log, Debug, cu.GetCursorPos());
+							Projects[ActiveRepo].StartStatusCheck(log, Debug, cu.GetCursorPos(), wu.hwnd);
 							StatusCheck = false;
 						}
 						cout << Projects[ActiveRepo].GetStatus(log, Debug); tc.SetColor(tc.Default);
@@ -170,8 +171,8 @@ int main()
 						{
 							string CommitMessage;
 							cout << "Inserisci il messaggio del Commit: ";
-							cin.ignore();
 							getline(cin, CommitMessage);
+							
 							switch (Projects[ActiveRepo].Commit(CommitMessage, log, Debug))
 							{
 								case 0:
@@ -510,7 +511,7 @@ int main()
 					}
 					
 					Projects[ActiveRepo].StopStatusCheck();
-					du.ChangeCurrDir(du.GetFilePath());
+					du.SetCurrDir(du.GetModuleFilePath());
 				}
 				else
 				{
@@ -575,6 +576,7 @@ int main()
 			
 			cout << "\nURL del Repo: ";
 			cin >> URL;
+			cin.ignore();
 			
 			cout << "Percorso di salvataggio: ";
 			Path = du.ChoseDirDialog();
@@ -585,8 +587,8 @@ int main()
 				cout << "\nClone in corso ";
 				cli.OneCharBar();
 				
-				du.ChangeCurrDir(Path);
-				CMDout = gu.GetCMDOutput("git clone " + URL, ReturnCode);
+				du.SetCurrDir(Path);
+				CMDout = su.GetCMDOutput("git clone " + URL, ReturnCode);
 				
 				cli.StopBar(100);
 			}

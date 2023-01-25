@@ -3,21 +3,21 @@
 class GitProject
 {
 	private:
-		GeneralUtils gu;
+		SystemUtils su;
 		DirUtils du;
 		//atomic<bool> Stop = false; // da errore, probabilmente non è compatibile coi vettori :(
 		bool Stop = false;
 		
-		void SC(Log& log, bool Debug, COORD CursorPos)
+		void SC(Log& log, bool Debug, COORD CursorPos, HWND hwnd)
 		{
 			TextColor tc;
-			WindowUtils wu;
+			WindowUtils wu(hwnd);
 			ConsoleUtils cu;
 			
 			bool Update = true;
 			COORD OrigPos;
 			
-			Sleep(3000);
+			Sleep(1000);
 			while(!Stop)
 			{
 				if(wu.IsWindowActive() && Update)
@@ -43,7 +43,7 @@ class GitProject
 		
 		string GetRepoName(Log& log, bool Debug)
 		{
-			du.ChangeCurrDir(RepoPath);
+			du.SetCurrDir(RepoPath);
 			string RepoName = RepoPath;
 			
 			while (RepoName.find("\\") != string::npos)
@@ -60,8 +60,8 @@ class GitProject
 		
 		string GetActiveBranch(Log& log, bool Debug)
 		{
-			du.ChangeCurrDir(RepoPath);
-			string Branch = SimpleFind(gu.GetCMDOutput("git branch"), "* ", "\n");
+			du.SetCurrDir(RepoPath);
+			string Branch = SimpleFind(su.GetCMDOutput("git branch"), "* ", "\n");
 			
 			if (Debug)
 				log.WriteLog("Branch attivo: " + Branch);
@@ -71,8 +71,8 @@ class GitProject
 		
 		VectString GetBranches(Log& log, bool Debug)
 		{
-			du.ChangeCurrDir(RepoPath);
-			string Out = gu.GetCMDOutput("git branch");
+			du.SetCurrDir(RepoPath);
+			string Out = su.GetCMDOutput("git branch");
 			VectString Branches;
 			
 			while (Out.find("  ") != string::npos)
@@ -96,11 +96,11 @@ class GitProject
 		short Commit(string CommitMessage, Log& log, bool Debug)
 		{
 			int Rtn;
-			du.ChangeCurrDir(RepoPath);
-			string Out = gu.GetCMDOutput("git commit -m \"" + CommitMessage + "\"", Rtn);
+			du.SetCurrDir(RepoPath);
+			string Out = su.GetCMDOutput("git commit -m \"" + CommitMessage + "\"", Rtn);
 			
 			if (Debug)
-				log.WriteLog("Commit: " + to_string(Rtn) + "\n" + Out);
+				log.WriteLog("Commit [" + CommitMessage + "]: " + to_string(Rtn) + "\n" + Out);
 			
 			if (Rtn == 0)
 				return 0;
@@ -121,8 +121,8 @@ class GitProject
 		short ChangeBranch(string BranchName, Log& log, bool Debug)
 		{
 			int Rtn;
-			du.ChangeCurrDir(RepoPath);
-			string Out = gu.GetCMDOutput("git checkout " + BranchName, Rtn);
+			du.SetCurrDir(RepoPath);
+			string Out = su.GetCMDOutput("git checkout " + BranchName, Rtn);
 			
 			if (Debug)
 				log.WriteLog("Cambio branch: " + to_string(Rtn) + "\n" + Out);
@@ -144,8 +144,8 @@ class GitProject
 		short CreateBranch(string BranchName, Log& log, bool Debug)
 		{
 			int Rtn;
-			du.ChangeCurrDir(RepoPath);
-			string Out = gu.GetCMDOutput("git checkout -b " + BranchName, Rtn);
+			du.SetCurrDir(RepoPath);
+			string Out = su.GetCMDOutput("git checkout -b " + BranchName, Rtn);
 			
 			if(Debug)
 				log.WriteLog("Creazione branch: " + to_string(Rtn) + "\n" + Out);
@@ -172,8 +172,8 @@ class GitProject
 		short DeleteBranch(string BranchName, Log& log, bool Debug)
 		{
 			int Rtn;
-			du.ChangeCurrDir(RepoPath);
-			string Out = gu.GetCMDOutput("git branch -d " + BranchName, Rtn);
+			du.SetCurrDir(RepoPath);
+			string Out = su.GetCMDOutput("git branch -d " + BranchName, Rtn);
 			
 			if (Debug)
 				log.WriteLog("Eliminazione branch: " + to_string(Rtn) + "\n" + Out);
@@ -194,8 +194,8 @@ class GitProject
 		
 		void ConfirmDeleteBranch(string BranchName, Log& log, bool Debug)
 		{
-			du.ChangeCurrDir(RepoPath);
-			string Out = gu.GetCMDOutput("git branch -D " + BranchName);
+			du.SetCurrDir(RepoPath);
+			string Out = su.GetCMDOutput("git branch -D " + BranchName);
 			
 			if (Debug)
 				log.WriteLog("Conferma eliminazione Branch " + BranchName + ":\n" + Out);
@@ -209,8 +209,8 @@ class GitProject
 			cout << "Pull in corso ";
 			cli.OneCharBar();
 			
-			du.ChangeCurrDir(RepoPath);
-			string Out = gu.GetCMDOutput("git pull origin " + GetActiveBranch(log, Debug), Rtn);
+			du.SetCurrDir(RepoPath);
+			string Out = su.GetCMDOutput("git pull origin " + GetActiveBranch(log, Debug), Rtn);
 			
 			cli.StopBar(100);
 			cout << endl;
@@ -252,8 +252,8 @@ class GitProject
 			cout << "Push in corso ";
 			cli.OneCharBar();
 			
-			du.ChangeCurrDir(RepoPath);
-			string Out = gu.GetCMDOutput("git push origin " + GetActiveBranch(log, Debug), Rtn);
+			du.SetCurrDir(RepoPath);
+			string Out = su.GetCMDOutput("git push origin " + GetActiveBranch(log, Debug), Rtn);
 			
 			cli.StopBar(300);
 			cout << endl;
@@ -294,8 +294,8 @@ class GitProject
 		short Stage(Log& log, bool Debug)
 		{
 			int Rtn;
-			du.ChangeCurrDir(RepoPath);
-			string Out = gu.GetCMDOutput("git add .", Rtn);
+			du.SetCurrDir(RepoPath);
+			string Out = su.GetCMDOutput("git add .", Rtn);
 			
 			if (Debug)
 				log.WriteLog("Stage: " + to_string(Rtn) + "\n" + Out);
@@ -309,10 +309,10 @@ class GitProject
 		
 		string GetStatus(Log& log, bool Debug)
 		{
-			du.ChangeCurrDir(RepoPath);
+			du.SetCurrDir(RepoPath);
 			TextColor tc;
 			
-			string Out = gu.GetCMDOutput("git status");
+			string Out = su.GetCMDOutput("git status");
 			
 			if(Debug)
 				log.WriteLog("Git Status: " + Out);
@@ -370,7 +370,7 @@ class GitProject
 			int Rtn;
 			COORD pos = cu.GetCursorPos();
 			
-			du.ChangeCurrDir(RepoPath);
+			du.SetCurrDir(RepoPath);
 			
 			if(InsideCmd)
 				cout << "Fetch in corso ";
@@ -379,7 +379,7 @@ class GitProject
 			
 			cli.OneCharBar();
 			
-			string Out = gu.GetCMDOutput("git fetch origin", Rtn);
+			string Out = su.GetCMDOutput("git fetch origin", Rtn);
 			
 			cli.StopBar(100);
 			cout << endl;
@@ -399,13 +399,13 @@ class GitProject
 		short Stash(Log& log, bool Debug)
 		{
 			int Rtn;
-			du.ChangeCurrDir(RepoPath);
-			string Out = gu.GetCMDOutput("git stash", Rtn);
+			du.SetCurrDir(RepoPath);
+			string Out = su.GetCMDOutput("git stash", Rtn);
 
 			if (Debug)
 				log.WriteLog("Stash salvato: " + to_string(Rtn) + "\n" + Out);
 
-			Out = gu.GetCMDOutput("git stash drop", Rtn);
+			Out = su.GetCMDOutput("git stash drop", Rtn);
 
 			if (Debug)
 				log.WriteLog("Stash droppato: " + to_string(Rtn) + "\n" + Out);
@@ -424,19 +424,19 @@ class GitProject
 		
 		bool IsRepo()
 		{
-			if(!du.ChangeCurrDir(RepoPath))
+			if(!du.SetCurrDir(RepoPath))
 				return false;
 			
-			if (gu.NoOutputCMD("git rev-parse --is-inside-work-tree") == 0)
+			if (su.NoOutputCMD("git rev-parse --is-inside-work-tree") == 0)
 				return true;
 			
 			return false;
 		}
 		
-		void StartStatusCheck(Log& log, bool Debug, COORD CursorPos)
+		void StartStatusCheck(Log& log, bool Debug, COORD CursorPos, HWND hwnd)
 		{
 			Stop = false;
-			thread t(&GitProject::SC, this, ref(log), Debug, CursorPos);
+			thread t(&GitProject::SC, this, ref(log), Debug, CursorPos, hwnd);
 			t.detach();
 		}
 		

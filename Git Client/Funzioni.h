@@ -30,7 +30,7 @@ VectString LoadSavedRepo( GitProjects& Projects, Log& log, bool Debug)
 	string buff;
 	
 	Projects.clear();
-	du.ChangeCurrDir(du.GetFilePath());
+	du.SetCurrDir(du.GetModuleFilePath());
 	
 	if ( !du.CheckFile( FileName ) )
 	{
@@ -77,7 +77,7 @@ bool SaveRepoPath( string Path, bool Debug, Log& log )
 	
 	if( Git.IsRepo() )
 	{
-		du.ChangeCurrDir( du.GetFilePath() );
+		du.SetCurrDir( du.GetModuleFilePath() );
 		
 		return du.AppendToFile( FileName, Path );
 	}
@@ -90,7 +90,7 @@ void RemoveRepo( GitProjects& Projects, int Selection)
 	DirUtils du;
 	string FileName = "projects.ini";
 	
-	du.ChangeCurrDir( du.GetFilePath() );
+	du.SetCurrDir( du.GetModuleFilePath() );
 	
 	Projects.erase( Projects.begin() + Selection );
 	
@@ -121,7 +121,7 @@ VectSettings LoadSettings(SettingsFile& sf)
 	
 	VectSettings Settings;
 	
-	du.ChangeCurrDir(du.GetFilePath());
+	du.SetCurrDir(du.GetModuleFilePath());
 	
 	CheckSettings(sf);
 	
@@ -150,23 +150,23 @@ VectSettings LoadSettings(SettingsFile& sf)
 
 short CreateRepo(Log& log, bool Debug, string Path)
 {
-	GeneralUtils gu;
+	SystemUtils su;
 	DirUtils du;
 	
 	int Rtn = -1;
 	string Out;
 	
-	du.ChangeCurrDir(Path);
+	du.SetCurrDir(Path);
 	
-	Out = gu.GetCMDOutput("git init", Rtn);
+	Out = su.GetCMDOutput("git init", Rtn);
 	
 	if(Debug)
 		log.WriteLog("Git init: " + to_string(Rtn) + "\n" + Out);
 	
 	if(Rtn == 0)
 	{
-		gu.NoOutputCMD("git add .");
-		gu.NoOutputCMD("git commit -m \"Initial commit\"");
+		su.NoOutputCMD("git add .");
+		su.NoOutputCMD("git commit -m \"Initial commit\"");
 		return 0;
 	}
 	else
@@ -182,7 +182,7 @@ void AssociateRemoteRepo(Log& log, bool Debug, GitProjects& Projects, int Active
 {
 	TextColor tc;
 	CLInterface cli;
-	GeneralUtils gu;
+	SystemUtils su;
 	DirUtils du;
 	
 	string URL;
@@ -194,8 +194,9 @@ void AssociateRemoteRepo(Log& log, bool Debug, GitProjects& Projects, int Active
 	{
 		cout << "URL Repository: ";
 		cin >> URL;
-		du.ChangeCurrDir(Projects[ActiveRepo].RepoPath);
-		gu.NoOutputCMD("git remote add origin " + URL);
+		cin.ignore();
+		du.SetCurrDir(Projects[ActiveRepo].RepoPath);
+		su.NoOutputCMD("git remote add origin " + URL);
 		tc.SetColor(tc.Lime);
 		cout << "Repository associato." << endl;
 		
@@ -220,25 +221,53 @@ bool UpdateRepoList(GitProjects& Projects, int ActiveRepo)
 		if (Projects[i].RepoPath != Projects[ActiveRepo].RepoPath)
 			Buff += "\n" + Projects[i].RepoPath;
 
-	du.ChangeCurrDir(du.GetFilePath());
+	du.SetCurrDir(du.GetModuleFilePath());
 	return du.WriteFile("projects.ini", Buff + "\n");
 }
 
-void CheckUpdate(Log& log, bool Debug, string Versione)
+bool AutoUpdate()
+{
+	GitHub gh;
+	DirUtils du;
+	SystemUtils su;
+
+	du.SetCurrDir(du.GetModuleFilePath());
+
+	if (!du.CheckDir("update"))
+		du.MakeDir("update");
+
+	if (!gh.DownloadFromRepoRelease("criper98", "git-client", "Git.Client.exe", "update\\"))
+		return false;
+
+	du.WriteFile("Update.vbs", "WScript.Sleep 5000\nSet filesys = CreateObject(\"Scripting.FileSystemObject\")\nSet WshShell = WScript.CreateObject(\"WScript.Shell\")\nfilesys.DeleteFile \"Git.Client.exe\"\nfilesys.MoveFile \"update\\Git.Client.exe\", \"Git.Client.exe\"\nWshShell.Run \"Git.Client.exe\", 1, false\nfilesys.DeleteFile \"Update.vbs\"");
+
+	su.NoOutputCMD("start \"\" \"" + du.GetModuleFilePath() + "Update.vbs\"");
+
+	return true;
+}
+
+bool CheckUpdate(Log& log, bool Debug, string Versione)
 {
 	GitHub gh;
 	EasyMSGB msgb;
-	GeneralUtils gu;
+	SystemUtils su;
 
 	if (Debug)
 		log.WriteLog("Verifico la presenza di aggiornamenti.");
 
-	string LatestTag = gh.GetRepoTag("Criper98", "Git-Client", "Pipe");
+	string LatestTag = gh.GetRepoTag("Criper98", "Git-Client");
 
-	if (LatestTag != Versione)
+	if (LatestTag != Versione && LatestTag.find("-1 errore") == string::npos)
 	{
 		log.WriteLog("Aggiornamento trovato [" + LatestTag + "], version corrente [" + Versione + "]");
-		if (msgb.YesNo("Nuova versione disponibile: " + LatestTag + "\nScaricarla ora?", msgb.Info, "Git Client"))
-			gu.OpenURL("https://github.com/Criper98/Git-Client/releases/latest");
+		if (msgb.YesNo("Nuova versione disponibile: " + LatestTag + "\nAggiornare ora?", msgb.Info, "Git Client"))
+		{
+			if (AutoUpdate())
+				return true;
+			else
+				msgb.Ok("Errore durante l'aggiornamento.", msgb.Error, "Git Client");
+		}
 	}
+
+	return false;
 }
